@@ -159,5 +159,5 @@ const allAds = Array.from({length: ADS_COUNT}, createBookingAd);
 //
 allAds.forEach((item, i) => {
   item.author.avatar = createAvatarLink()[i];
-  item.offer.address = `${String(allAds[i].location.lar)}, ${String(allAds[i].location.lng)}`;
+  item.offer.address = `${allAds[i].location.lar}, ${allAds[i].location.lng}`;
 });
