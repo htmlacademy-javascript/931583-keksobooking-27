@@ -23,7 +23,6 @@ function getRandomPositiveFloat (a, b, digits = 1) {
   return +result.toFixed(digits);
 }
 
-//
 // Массивы с данными для объявлений о бронировании
 //
 const OFFER_TITLE = [
@@ -77,17 +76,18 @@ const OFFER_PHOTOS = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',
 ];
 
-//
 // Количество созданных объвлений
 //
 const ADS_COUNT = 10;
 
+// Создает номер для ссылки
 //
+const createNumberLink = (input) => input < 10 ? `0${input}` : String(input);
+
 // Выбирает случайный элемент из массива
 //
 const getRandomArrayElement = (elements) => elements[getRandomPositiveInteger(0, elements.length - 1)];
 
-//
 // Создает массив строк — массив случайной длины из значений
 //
 const createRandomArray = (elements) => {
@@ -106,28 +106,12 @@ const createRandomArray = (elements) => {
   return array;
 };
 
-//
-// Создает массив с ссылками к аватаркам
-//
-const createAvatarLink = function () {
-  const avatarLinks = [];
-  for (let i = 1; i <= ADS_COUNT; i++) {
-    if (i < 10) {
-      avatarLinks.push(`img/avatars/user0${i}.png`);
-    } else {
-      avatarLinks.push(`img/avatars/user${i}.png`);
-    }
-  }
-  return avatarLinks;
-};
-
-//
 // Создает объект объявления
 //
-const createBookingAd = function () {
-  return {
+const createBookingAd = (bookigAd, index) => {
+  bookigAd = {
     author: {
-      avatar: '',
+      avatar: `img/avatars/user${createNumberLink(index + 1)}.png`,
     },
     offer: {
       title: getRandomArrayElement(OFFER_TITLE),
@@ -145,19 +129,13 @@ const createBookingAd = function () {
     location: {
       lar: getRandomPositiveFloat(35.65, 35.7, 5),
       lng: getRandomPositiveFloat(139.7, 139.8, 5),
-    }
+    },
   };
+  bookigAd.offer.address = `${bookigAd.location.lar}, ${bookigAd.location.lng}`;
+  return bookigAd;
 };
 
-//
 // Массив со всеми объявлениями
 //
 const allAds = Array.from({length: ADS_COUNT}, createBookingAd);
-
-//
-// Добавляет ссылки к аватаркам, строку в адрес из координат
-//
-allAds.forEach((item, i) => {
-  item.author.avatar = createAvatarLink()[i];
-  item.offer.address = `${allAds[i].location.lar}, ${allAds[i].location.lng}`;
-});
+console.log(allAds);
