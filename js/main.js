@@ -1,4 +1,3 @@
-
 // Функция, возвращающая случайное целое число
 // из переданного диапазона включительно:
 function getRandomPositiveInteger (a, b) {
@@ -108,14 +107,16 @@ const createRandomArray = (elements) => {
 
 // Создает объект объявления
 //
-const createBookingAd = (bookigAd, index) => {
-  bookigAd = {
+const createBookingAd = function (bookigAd, index) {
+  const latitude = getRandomPositiveFloat(35.65, 35.7, 5);
+  const longitude = getRandomPositiveFloat(139.7, 139.8, 5);
+  return {
     author: {
       avatar: `img/avatars/user${createNumberLink(index + 1)}.png`,
     },
     offer: {
       title: getRandomArrayElement(OFFER_TITLE),
-      address: '',
+      address: `${latitude}, ${longitude}`,
       price: getRandomPositiveInteger(1000, 15000),
       type: getRandomArrayElement(OFFER_TYPE),
       rooms: getRandomPositiveInteger(1, 6),
@@ -127,12 +128,10 @@ const createBookingAd = (bookigAd, index) => {
       photos: createRandomArray(OFFER_PHOTOS),
     },
     location: {
-      lar: getRandomPositiveFloat(35.65, 35.7, 5),
-      lng: getRandomPositiveFloat(139.7, 139.8, 5),
+      lar: latitude,
+      lng: longitude,
     },
   };
-  bookigAd.offer.address = `${bookigAd.location.lar}, ${bookigAd.location.lng}`;
-  return bookigAd;
 };
 
 // Массив со всеми объявлениями
