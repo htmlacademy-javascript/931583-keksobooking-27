@@ -53,10 +53,6 @@ const OFFER_PHOTOS = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',
 ];
 
-// Количество созданных объвлений
-//
-const ADS_COUNT = 10;
-
 // Создает номер для ссылки
 //
 const createNumberLink = (input) => input < 10 ? `0${input}` : String(input);
@@ -85,7 +81,7 @@ const createRandomArray = (elements) => {
 
 // Создает объект объявления
 //
-const createBookingAd = (bookigAd, index) => {
+const createBookingAd = (bookingAd, index) => {
   const latitude = getRandomPositiveFloat(35.65, 35.7, 5);
   const longitude = getRandomPositiveFloat(139.7, 139.8, 5);
   return {
@@ -114,6 +110,6 @@ const createBookingAd = (bookigAd, index) => {
 
 // Массив со всеми объявлениями
 //
-const createAllAds = () => Array.from({length: ADS_COUNT}, createBookingAd);
+const createBookingAds = (countAds) => Array.from({length: countAds}, createBookingAd);
 
-export {createAllAds};
+export {createBookingAds};
