@@ -25,7 +25,7 @@ pristine.addValidator(
   0
 );
 
-// Проверка на валидацию - синхронизация полей "Количество комнат" и "Количество мест"
+// Проверка на валидацию - Cинхронизация полей "Количество комнат" и "Количество мест"
 const questsOption = {
   '1': ['1'],
   '2': ['1', '2'],
@@ -35,27 +35,18 @@ const questsOption = {
 
 const validateQuests = () => questsOption[roomField.value].includes(capacityField.value);
 
-const getDeliveryErrorMessage = () => {
-  let deliveryErrorMessage;
-  switch (roomField.value) {
-    case '1':
-      deliveryErrorMessage = 'Размещение в 1 комнате - не более 1 гостя';
-      break;
-    case '2':
-      deliveryErrorMessage = 'Размещение в 2 комнатах - от 1 до 2 гостей';
-      break;
-    case '3':
-      deliveryErrorMessage = 'Размещение в 3 комнатах - от 1 до 3 гостей';
-      break;
-    case '100':
-      deliveryErrorMessage = '100 комнат не для гостей';
-      break;
+const getQuestsErrorMessage = () => {
+  const QuestsErrorMessage = {
+    '1': 'Размещение в 1 комнате - не более 1 гостя',
+    '2': 'Размещение в 2 комнатах - от 1 до 2 гостей',
+    '3': 'Размещение в 3 комнатах - от 1 до 3 гостей',
+    '100': '100 комнат не для гостей',
   }
-  return deliveryErrorMessage;
+  return QuestsErrorMessage[roomField.value];
 };
 
 pristine.addValidator(
-  capacityField, validateQuests, getDeliveryErrorMessage
+  capacityField, validateQuests, getQuestsErrorMessage
 );
 
 // Отправка формы SUBMIT
