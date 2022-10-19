@@ -26,6 +26,7 @@ const priceField = formAd.querySelector('#price');
 const typeHouseField = formAd.querySelector('#type');
 const checkInField = formAd.querySelector('#timein');
 const checkOutField = formAd.querySelector('#timeout');
+const addressField = formAd.querySelector('#address');
 
 // Pristine
 const pristine = new Pristine(formAd, {
@@ -90,6 +91,12 @@ const changeCheckOut = () => {
 checkInField.addEventListener('change', changeCheckIn);
 checkOutField.addEventListener('change', changeCheckOut);
 
+// Блокировка поля "Адрес" для редактирования и создание его значений от главного маркера карты
+addressField.setAttribute('readonly', 'readonly');
+const getCoordinates = (coordinates) => {
+  addressField.value = `${(coordinates.lat).toFixed(5)}, ${(coordinates.lng).toFixed(5)}`;
+};
+
 // Отправка формы SUBMIT
 formAd.addEventListener('submit', (evt) => {
   evt.preventDefault();
@@ -122,4 +129,8 @@ const pageActive = () => {
   }
 };
 
-export {pageDisabled,pageActive};
+export {
+  pageDisabled,
+  pageActive,
+  getCoordinates,
+};

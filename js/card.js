@@ -1,5 +1,3 @@
-import {createBookingAds} from './data.js';
-
 // Объект с типом жилья для сопоставления с подписями на карточке
 const TYPE_HOUSE = {
   'flat': 'Квартира',
@@ -9,15 +7,9 @@ const TYPE_HOUSE = {
   'hotel': 'Отель',
 };
 
-const mapCanvas = document.querySelector('.map__canvas');
-const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
-
-// Создает одно объяление
-const bookingAds = createBookingAds(1);
-
 // Собирает объявление
-bookingAds.forEach((ad) => {
-
+const getCard = (ad) => {
+  const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
   const card = cardTemplate.cloneNode(true);
 
   card.querySelector('.popup__title').textContent = ad.offer.title || '';
@@ -57,5 +49,7 @@ bookingAds.forEach((ad) => {
   });
 
   // Выводит одну  сгенерированную карточку на страницу сайта
-  mapCanvas.appendChild(card);
-});
+  return card;
+};
+
+export {getCard};
