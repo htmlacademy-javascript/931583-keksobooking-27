@@ -1,12 +1,31 @@
+const QUESTS_OPTION = {
+  '1': ['1'],
+  '2': ['1', '2'],
+  '3': ['1', '2','3'],
+  '100': ['0'],
+};
+
+const MIN_PRICE_HOUSE = {
+  'bungalow': '0',
+  'flat': '1 000',
+  'hotel': '3 000',
+  'house': '5 000',
+  'palace': '10 000',
+};
+
 const formAd = document.querySelector('.ad-form');
 const formAdChildren = formAd.children;
 const filterMap = document.querySelector('.map__filters');
 const filterMapChildren = filterMap.children;
 
-// Элементы формы для валидации
+// Элементы формы
 const titleField = formAd.querySelector('#title');
 const roomField = formAd.querySelector('#room_number');
 const capacityField = formAd.querySelector('#capacity');
+const priceField = formAd.querySelector('#price');
+const typeHouseField = formAd.querySelector('#type');
+const checkInField = formAd.querySelector('#timein');
+const checkOutField = formAd.querySelector('#timeout');
 
 // Pristine
 const pristine = new Pristine(formAd, {
@@ -25,38 +44,51 @@ pristine.addValidator(
   0
 );
 
-// Проверка на валидацию - синхронизация полей "Количество комнат" и "Количество мест"
-const questsOption = {
-  '1': ['1'],
-  '2': ['1', '2'],
-  '3': ['1', '2','3'],
-  '100': ['0'],
-};
+// Проверка на валидацию - зависимость полей "Количество комнат" и "Количество мест"
+const validateQuests = () => QUESTS_OPTION[roomField.value].includes(capacityField.value);
 
-const validateQuests = () => questsOption[roomField.value].includes(capacityField.value);
-
-const getDeliveryErrorMessage = () => {
-  let deliveryErrorMessage;
-  switch (roomField.value) {
-    case '1':
-      deliveryErrorMessage = 'Размещение в 1 комнате - не более 1 гостя';
-      break;
-    case '2':
-      deliveryErrorMessage = 'Размещение в 2 комнатах - от 1 до 2 гостей';
-      break;
-    case '3':
-      deliveryErrorMessage = 'Размещение в 3 комнатах - от 1 до 3 гостей';
-      break;
-    case '100':
-      deliveryErrorMessage = '100 комнат не для гостей';
-      break;
-  }
-  return deliveryErrorMessage;
+const getQuestsErrorMessage = () => {
+  const QuestsErrorMessage = {
+    '1': 'Размещение в 1 комнате - не более 1 гостя',
+    '2': 'Размещение в 2 комнатах - от 1 до 2 гостей',
+    '3': 'Размещение в 3 комнатах - от 1 до 3 гостей',
+    '100': '100 комнат не для гостей',
+  };
+  return QuestsErrorMessage[roomField.value];
 };
 
 pristine.addValidator(
-  capacityField, validateQuests, getDeliveryErrorMessage
+  capacityField, validateQuests, getQuestsErrorMessage
 );
+
+// Проверка на валидацию - зависимость поля «Цена за ночь» от значения «Тип жилья»
+const validatePriceHouse = () => +priceField.value > +priceField.min;
+const getPriceErrorMessage = () => `${typeHouseField.options[typeHouseField.selectedIndex].text} - мин.цена ${priceField.min} рублей!`;
+
+pristine.addValidator(
+  priceField, validatePriceHouse, getPriceErrorMessage, 2, true
+);
+
+//  Выбор значения «Тип жилья» меняет атрибуты минимального значения и плейсхолдера поля «Цена за ночь».
+const changeMinPrice = () => {
+  priceField.min = MIN_PRICE_HOUSE[typeHouseField.value];
+  priceField.placeholder = MIN_PRICE_HOUSE[typeHouseField.value];
+};
+
+typeHouseField.addEventListener('change', changeMinPrice);
+
+//
+// «Время заезда» и «Время выезда» - выбор значения одного поля автоматически изменят значение другого.
+const changeCheckIn = () => {
+  checkOutField.value = checkInField.value;
+};
+
+const changeCheckOut = () => {
+  checkInField.value = checkOutField.value;
+};
+
+checkInField.addEventListener('change', changeCheckIn);
+checkOutField.addEventListener('change', changeCheckOut);
 
 // Отправка формы SUBMIT
 formAd.addEventListener('submit', (evt) => {
