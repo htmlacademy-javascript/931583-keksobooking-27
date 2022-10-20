@@ -83,14 +83,6 @@ pristine.addValidator(
   capacityField, validateQuests, getQuestsErrorMessage
 );
 
-// Проверка на валидацию - зависимость поля «Цена за ночь» от значения «Тип жилья»
-const validatePriceHouse = () => +(priceField.value) >= +(priceField.min);
-const getPriceErrorMessage = () => `${typeHouseField.options[typeHouseField.selectedIndex].text} - мин.цена ${priceField.min} рублей!`;
-
-pristine.addValidator(
-  priceField, validatePriceHouse, getPriceErrorMessage, 2, true
-);
-
 //  Выбор значения «Тип жилья» меняет атрибуты минимального значения и плейсхолдера поля «Цена за ночь».
 const changeMinPrice = () => {
   priceField.min = MIN_PRICE_HOUSE[typeHouseField.value];
@@ -105,10 +97,11 @@ const changeMinPrice = () => {
 typeHouseField.addEventListener('change', changeMinPrice);
 
 // Включает слайдер при нажатии
-sliderPriceElement.noUiSlider.on('change', () => {
+sliderPriceElement.addEventListener('click', () => {
   sliderPriceElement.noUiSlider.on('update',() => {
     priceField.value = sliderPriceElement.noUiSlider.get();
-  });
+  },
+  {once: true });
 });
 
 // Меняет положение ползунка слайдера в зависимости от введенного значения поля цены
@@ -116,6 +109,13 @@ priceField.addEventListener('change', () => {
   sliderPriceElement.noUiSlider.set(priceField.value);
 });
 
+// Проверка на валидацию - зависимость поля «Цена за ночь» от значения «Тип жилья»
+const validatePriceHouse = () => +(priceField.value) >= +(priceField.min);
+const getPriceErrorMessage = () => `${typeHouseField.options[typeHouseField.selectedIndex].text} - мин.цена ${priceField.min} рублей!`;
+
+pristine.addValidator(
+  priceField, validatePriceHouse, getPriceErrorMessage, 2, true
+);
 
 // «Время заезда» и «Время выезда» - выбор значения одного поля автоматически изменят значение другого.
 const changeCheckIn = () => {

@@ -24,7 +24,7 @@ const pinIcon = L.icon({
 
 // Карта с центром в Токио
 const map = L.map('map-canvas')
-  .setView(CENTER_MAP, 8);
+  .setView(CENTER_MAP, 12);
 
 // Использование тайлов от OpenStreetMap
 L.tileLayer(
