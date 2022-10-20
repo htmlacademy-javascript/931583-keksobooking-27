@@ -28,6 +28,27 @@ const checkInField = formAd.querySelector('#timein');
 const checkOutField = formAd.querySelector('#timeout');
 const addressField = formAd.querySelector('#address');
 
+// Элемент для слайдера
+const sliderPriceElement = formAd.querySelector('.ad-form__slider');
+
+// Слайдер noUiSlider
+noUiSlider.create(sliderPriceElement, {
+  range: {
+    min: 0,
+    max: 100000,
+  },
+  start: 0,
+  connect: 'lower',
+  format: {
+    to: function (value) {
+      return value.toFixed(0);
+    },
+    from: function (value) {
+      return parseFloat(value);
+    },
+  },
+});
+
 // Pristine
 const pristine = new Pristine(formAd, {
   classTo: 'ad-form__element',
@@ -63,7 +84,7 @@ pristine.addValidator(
 );
 
 // Проверка на валидацию - зависимость поля «Цена за ночь» от значения «Тип жилья»
-const validatePriceHouse = () => +priceField.value > +priceField.min;
+const validatePriceHouse = () => +(priceField.value) >= +(priceField.min);
 const getPriceErrorMessage = () => `${typeHouseField.options[typeHouseField.selectedIndex].text} - мин.цена ${priceField.min} рублей!`;
 
 pristine.addValidator(
@@ -74,11 +95,28 @@ pristine.addValidator(
 const changeMinPrice = () => {
   priceField.min = MIN_PRICE_HOUSE[typeHouseField.value];
   priceField.placeholder = MIN_PRICE_HOUSE[typeHouseField.value];
+
+  // Меняет стартовую позицию ползунка слайдера в зависимости о выбранного типа жилья
+  sliderPriceElement.noUiSlider.updateOptions({
+    start: parseInt(priceField.min.replace(/\s+/g, ''),10), //Преобразует строку в число и удаляет между числами пробелы
+  });
 };
 
 typeHouseField.addEventListener('change', changeMinPrice);
 
-//
+// Включает слайдер при нажатии
+sliderPriceElement.noUiSlider.on('change', () => {
+  sliderPriceElement.noUiSlider.on('update',() => {
+    priceField.value = sliderPriceElement.noUiSlider.get();
+  });
+});
+
+// Меняет положение ползунка слайдера в зависимости от введенного значения поля цены
+priceField.addEventListener('change', () => {
+  sliderPriceElement.noUiSlider.set(priceField.value);
+});
+
+
 // «Время заезда» и «Время выезда» - выбор значения одного поля автоматически изменят значение другого.
 const changeCheckIn = () => {
   checkOutField.value = checkInField.value;
