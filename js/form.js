@@ -13,6 +13,8 @@ const MIN_PRICE_HOUSE = {
   'palace': '10 000',
 };
 
+const MAX_PRICE = 100000;
+
 const formAd = document.querySelector('.ad-form');
 const formAdChildren = formAd.children;
 const filterMap = document.querySelector('.map__filters');
@@ -31,13 +33,16 @@ const addressField = formAd.querySelector('#address');
 // Элемент для слайдера
 const sliderPriceElement = formAd.querySelector('.ad-form__slider');
 
+// Переводит мин.цену из строки в число
+const getNumberMinPrice = () => parseInt(MIN_PRICE_HOUSE[typeHouseField.value].replace(' ', ''), 10);
+
 // Слайдер noUiSlider
 noUiSlider.create(sliderPriceElement, {
   range: {
-    min: 0,
-    max: 100000,
+    min: getNumberMinPrice(),
+    max: MAX_PRICE,
   },
-  start: 0,
+  start: getNumberMinPrice(),
   connect: 'lower',
   format: {
     to: function (value) {
@@ -90,18 +95,19 @@ const changeMinPrice = () => {
 
   // Меняет стартовую позицию ползунка слайдера в зависимости о выбранного типа жилья
   sliderPriceElement.noUiSlider.updateOptions({
-    start: parseInt(priceField.min.replace(/\s+/g, ''),10), //Преобразует строку в число и удаляет между числами пробелы
+    start: getNumberMinPrice(),
+    range: {
+      min: getNumberMinPrice(),
+      max: MAX_PRICE,
+    }
   });
 };
 
 typeHouseField.addEventListener('change', changeMinPrice);
 
-// Включает слайдер при нажатии
-sliderPriceElement.addEventListener('click', () => {
-  sliderPriceElement.noUiSlider.on('update',() => {
-    priceField.value = sliderPriceElement.noUiSlider.get();
-  },
-  {once: true });
+// Включает слайдер при нажатии и перетягивании ползунка
+sliderPriceElement.noUiSlider.on('update',(values) => {
+  priceField.value = Number(values[0]) === getNumberMinPrice() ? '' : sliderPriceElement.noUiSlider.get();
 });
 
 // Меняет положение ползунка слайдера в зависимости от введенного значения поля цены
