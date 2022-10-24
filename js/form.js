@@ -46,7 +46,7 @@ noUiSlider.create(sliderPriceElement, {
   connect: 'lower',
   format: {
     to: function (value) {
-      return value.toFixed(0);
+      return Number(value.toFixed(0));
     },
     from: function (value) {
       return parseFloat(value);
@@ -106,8 +106,9 @@ const changeMinPrice = () => {
 typeHouseField.addEventListener('change', changeMinPrice);
 
 // Включает слайдер при нажатии и перетягивании ползунка
-sliderPriceElement.noUiSlider.on('update',(values) => {
-  priceField.value = Number(values[0]) === getNumberMinPrice() ? '' : sliderPriceElement.noUiSlider.get();
+sliderPriceElement.noUiSlider.on('update',() => {
+  const sliderPrice = sliderPriceElement.noUiSlider.get();
+  priceField.value = sliderPrice === getNumberMinPrice() ? '' : sliderPrice;
 });
 
 // Меняет положение ползунка слайдера в зависимости от введенного значения поля цены

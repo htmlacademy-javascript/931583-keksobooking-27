@@ -1,5 +1,4 @@
 import { pageActive, getCoordinates } from './form.js';
-import { createBookingAds } from './data.js';
 import { getCard } from './card.js';
 
 // Координаты центра карты
@@ -45,21 +44,22 @@ const mainPinMarker = L.marker(
 mainPinMarker.addTo(map);
 
 // 10 карточек объявлений и соответствующие им маркеры
-const bookingAds = createBookingAds(10);
-bookingAds.forEach((element) => {
-  const marker = L.marker(
-    {
-      lat: element.location.lar,
-      lng: element.location.lng,
-    },
-    {
-      icon: pinIcon,
-    },
-  );
-  marker
-    .addTo(map)
-    .bindPopup(getCard(element));
-});
+const bookingAds = (ads) => {
+  ads.forEach((element) => {
+    const marker = L.marker(
+      {
+        lat: element.location.lat,
+        lng: element.location.lng,
+      },
+      {
+        icon: pinIcon,
+      },
+    );
+    marker
+      .addTo(map)
+      .bindPopup(getCard(element));
+  });
+};
 
 // Запись координат от главного маркера для формы в поле "Адрес"
 mainPinMarker.on('moveend', (evt) => {
@@ -73,4 +73,4 @@ const loadMap = () => {
   getCoordinates(CENTER_MAP);
 };
 
-export {loadMap};
+export {loadMap, bookingAds};
