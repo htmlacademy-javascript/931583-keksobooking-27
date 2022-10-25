@@ -6,4 +6,3 @@ pageDisabled();
 loadMap();
 getData((ads) => bookingAds(ads));
 
-

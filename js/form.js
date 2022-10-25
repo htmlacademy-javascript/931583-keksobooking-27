@@ -1,3 +1,7 @@
+import { sendData } from './data.js';
+import { showSuccessPopup, showErrorPopup } from './popup.js';
+import {mainPinMarker, map, CENTER_MAP, ZOOM_MAP} from './map.js';
+
 const QUESTS_OPTION = {
   '1': ['1'],
   '2': ['1', '2'],
@@ -29,6 +33,7 @@ const typeHouseField = formAd.querySelector('#type');
 const checkInField = formAd.querySelector('#timein');
 const checkOutField = formAd.querySelector('#timeout');
 const addressField = formAd.querySelector('#address');
+const resetButton = formAd.querySelector('.ad-form__reset');
 
 // Элемент для слайдера
 const sliderPriceElement = formAd.querySelector('.ad-form__slider');
@@ -90,9 +95,8 @@ pristine.addValidator(
 
 //  Выбор значения «Тип жилья» меняет атрибуты минимального значения и плейсхолдера поля «Цена за ночь».
 const changeMinPrice = () => {
-  priceField.min = MIN_PRICE_HOUSE[typeHouseField.value];
+  priceField.min = getNumberMinPrice();
   priceField.placeholder = MIN_PRICE_HOUSE[typeHouseField.value];
-
   // Меняет стартовую позицию ползунка слайдера в зависимости о выбранного типа жилья
   sliderPriceElement.noUiSlider.updateOptions({
     start: getNumberMinPrice(),
@@ -115,9 +119,8 @@ sliderPriceElement.noUiSlider.on('update',() => {
 priceField.addEventListener('change', () => {
   sliderPriceElement.noUiSlider.set(priceField.value);
 });
-
 // Проверка на валидацию - зависимость поля «Цена за ночь» от значения «Тип жилья»
-const validatePriceHouse = () => +(priceField.value) >= +(priceField.min);
+const validatePriceHouse = () => Number(priceField.value) >= Number(priceField.min);
 const getPriceErrorMessage = () => `${typeHouseField.options[typeHouseField.selectedIndex].text} - мин.цена ${priceField.min} рублей!`;
 
 pristine.addValidator(
@@ -142,10 +145,40 @@ const getCoordinates = (coordinates) => {
   addressField.value = `${(coordinates.lat).toFixed(5)}, ${(coordinates.lng).toFixed(5)}`;
 };
 
+// Сбросывает все поля при успешной отправке или при нажатии на кнопку "Очистка"
+const resetForm = () => {
+  mainPinMarker.setLatLng(CENTER_MAP);
+  map.setView(CENTER_MAP, ZOOM_MAP);
+  formAd.reset();
+  pristine.reset();
+  sliderPriceElement.noUiSlider.updateOptions({
+    start: getNumberMinPrice(),
+  });
+  getCoordinates(mainPinMarker.getLatLng());
+};
+
+// Сброс формы при нажатии кнопки "Очистка"
+resetButton.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  resetForm();
+});
+
 // Отправка формы SUBMIT
 formAd.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  pristine.validate();
+  const isValid = pristine.validate();
+  if (isValid) {
+    sendData(
+      () => {
+        showSuccessPopup();
+        resetForm();
+      },
+      () => {
+        showErrorPopup();
+      },
+      new FormData(evt.target),
+    );
+  }
 });
 
 // Неактивное состояние формы и фильтра при отключенной карте
@@ -174,8 +207,4 @@ const pageActive = () => {
   }
 };
 
-export {
-  pageDisabled,
-  pageActive,
-  getCoordinates,
-};
+export {pageDisabled, pageActive, getCoordinates};
