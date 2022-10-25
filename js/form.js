@@ -149,6 +149,7 @@ const getCoordinates = (coordinates) => {
 const resetForm = () => {
   mainPinMarker.setLatLng(CENTER_MAP);
   map.setView(CENTER_MAP, ZOOM_MAP);
+  map.closePopup();
   formAd.reset();
   pristine.reset();
   sliderPriceElement.noUiSlider.updateOptions({
