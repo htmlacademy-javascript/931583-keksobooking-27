@@ -1,12 +1,14 @@
 import { pageActive, getCoordinates } from './form.js';
-import { createBookingAds } from './data.js';
 import { getCard } from './card.js';
 
 // Координаты центра карты
 const CENTER_MAP = {
-  lat: 35.6895,
-  lng: 139.6917,
+  lat: 35.689511,
+  lng: 139.691711,
 };
+
+// Зум карты
+const ZOOM_MAP = 12;
 
 // Главная иконка маркера на карте
 const mainPinIcon = L.icon({
@@ -24,7 +26,7 @@ const pinIcon = L.icon({
 
 // Карта с центром в Токио
 const map = L.map('map-canvas')
-  .setView(CENTER_MAP, 12);
+  .setView(CENTER_MAP, ZOOM_MAP);
 
 // Использование тайлов от OpenStreetMap
 L.tileLayer(
@@ -44,22 +46,23 @@ const mainPinMarker = L.marker(
 );
 mainPinMarker.addTo(map);
 
-// 10 карточек объявлений и соответствующие им маркеры
-const bookingAds = createBookingAds(10);
-bookingAds.forEach((element) => {
-  const marker = L.marker(
-    {
-      lat: element.location.lar,
-      lng: element.location.lng,
-    },
-    {
-      icon: pinIcon,
-    },
-  );
-  marker
-    .addTo(map)
-    .bindPopup(getCard(element));
-});
+// Создает маркеры похожих объявлений на карте
+const bookingAds = (ads) => {
+  ads.forEach((element) => {
+    const marker = L.marker(
+      {
+        lat: element.location.lat,
+        lng: element.location.lng,
+      },
+      {
+        icon: pinIcon,
+      },
+    );
+    marker
+      .addTo(map)
+      .bindPopup(getCard(element));
+  });
+};
 
 // Запись координат от главного маркера для формы в поле "Адрес"
 mainPinMarker.on('moveend', (evt) => {
@@ -72,5 +75,4 @@ const loadMap = () => {
   map.on('load', pageActive());
   getCoordinates(CENTER_MAP);
 };
-
-export {loadMap};
+export {loadMap, bookingAds, mainPinMarker, map, CENTER_MAP, ZOOM_MAP};

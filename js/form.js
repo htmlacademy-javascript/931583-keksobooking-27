@@ -1,3 +1,7 @@
+import { sendData } from './data.js';
+import { showSuccessPopup, showErrorPopup } from './popup.js';
+import {mainPinMarker, map, CENTER_MAP, ZOOM_MAP} from './map.js';
+
 const QUESTS_OPTION = {
   '1': ['1'],
   '2': ['1', '2'],
@@ -13,6 +17,8 @@ const MIN_PRICE_HOUSE = {
   'palace': '10 000',
 };
 
+const MAX_PRICE = 100000;
+
 const formAd = document.querySelector('.ad-form');
 const formAdChildren = formAd.children;
 const filterMap = document.querySelector('.map__filters');
@@ -27,21 +33,25 @@ const typeHouseField = formAd.querySelector('#type');
 const checkInField = formAd.querySelector('#timein');
 const checkOutField = formAd.querySelector('#timeout');
 const addressField = formAd.querySelector('#address');
+const resetButton = formAd.querySelector('.ad-form__reset');
 
 // Элемент для слайдера
 const sliderPriceElement = formAd.querySelector('.ad-form__slider');
 
+// Переводит мин.цену из строки в число
+const getNumberMinPrice = () => parseInt(MIN_PRICE_HOUSE[typeHouseField.value].replace(' ', ''), 10);
+
 // Слайдер noUiSlider
 noUiSlider.create(sliderPriceElement, {
   range: {
-    min: 0,
-    max: 100000,
+    min: getNumberMinPrice(),
+    max: MAX_PRICE,
   },
-  start: 0,
+  start: getNumberMinPrice(),
   connect: 'lower',
   format: {
     to: function (value) {
-      return value.toFixed(0);
+      return Number(value.toFixed(0));
     },
     from: function (value) {
       return parseFloat(value);
@@ -85,32 +95,32 @@ pristine.addValidator(
 
 //  Выбор значения «Тип жилья» меняет атрибуты минимального значения и плейсхолдера поля «Цена за ночь».
 const changeMinPrice = () => {
-  priceField.min = MIN_PRICE_HOUSE[typeHouseField.value];
+  priceField.min = getNumberMinPrice();
   priceField.placeholder = MIN_PRICE_HOUSE[typeHouseField.value];
-
   // Меняет стартовую позицию ползунка слайдера в зависимости о выбранного типа жилья
   sliderPriceElement.noUiSlider.updateOptions({
-    start: parseInt(priceField.min.replace(/\s+/g, ''),10), //Преобразует строку в число и удаляет между числами пробелы
+    start: getNumberMinPrice(),
+    range: {
+      min: getNumberMinPrice(),
+      max: MAX_PRICE,
+    }
   });
 };
 
 typeHouseField.addEventListener('change', changeMinPrice);
 
-// Включает слайдер при нажатии
-sliderPriceElement.addEventListener('click', () => {
-  sliderPriceElement.noUiSlider.on('update',() => {
-    priceField.value = sliderPriceElement.noUiSlider.get();
-  },
-  {once: true });
+// Включает слайдер при нажатии и перетягивании ползунка
+sliderPriceElement.noUiSlider.on('update',() => {
+  const sliderPrice = sliderPriceElement.noUiSlider.get();
+  priceField.value = sliderPrice === getNumberMinPrice() ? '' : sliderPrice;
 });
 
 // Меняет положение ползунка слайдера в зависимости от введенного значения поля цены
 priceField.addEventListener('change', () => {
   sliderPriceElement.noUiSlider.set(priceField.value);
 });
-
 // Проверка на валидацию - зависимость поля «Цена за ночь» от значения «Тип жилья»
-const validatePriceHouse = () => +(priceField.value) >= +(priceField.min);
+const validatePriceHouse = () => Number(priceField.value) >= Number(priceField.min);
 const getPriceErrorMessage = () => `${typeHouseField.options[typeHouseField.selectedIndex].text} - мин.цена ${priceField.min} рублей!`;
 
 pristine.addValidator(
@@ -135,10 +145,41 @@ const getCoordinates = (coordinates) => {
   addressField.value = `${(coordinates.lat).toFixed(5)}, ${(coordinates.lng).toFixed(5)}`;
 };
 
+// Сбросывает все поля при успешной отправке или при нажатии на кнопку "Очистка"
+const resetForm = () => {
+  mainPinMarker.setLatLng(CENTER_MAP);
+  map.setView(CENTER_MAP, ZOOM_MAP);
+  map.closePopup();
+  formAd.reset();
+  pristine.reset();
+  sliderPriceElement.noUiSlider.updateOptions({
+    start: getNumberMinPrice(),
+  });
+  getCoordinates(mainPinMarker.getLatLng());
+};
+
+// Сброс формы при нажатии кнопки "Очистка"
+resetButton.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  resetForm();
+});
+
 // Отправка формы SUBMIT
 formAd.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  pristine.validate();
+  const isValid = pristine.validate();
+  if (isValid) {
+    sendData(
+      () => {
+        showSuccessPopup();
+        resetForm();
+      },
+      () => {
+        showErrorPopup();
+      },
+      new FormData(evt.target),
+    );
+  }
 });
 
 // Неактивное состояние формы и фильтра при отключенной карте
@@ -167,8 +208,4 @@ const pageActive = () => {
   }
 };
 
-export {
-  pageDisabled,
-  pageActive,
-  getCoordinates,
-};
+export {pageDisabled, pageActive, getCoordinates};
