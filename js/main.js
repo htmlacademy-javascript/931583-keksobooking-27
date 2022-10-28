@@ -1,8 +1,14 @@
-import {pageDisabled} from './form.js';
-import {bookingAds, loadMap} from './map.js';
-import {getData} from './data.js';
+import { pageDisabled, clickOnReset } from './form.js';
+import { loadMap } from './map.js';
+import { renderAds, activateFilter } from './filter.js';
+import { getData } from './data.js';
 
 pageDisabled();
 loadMap();
-getData((ads) => bookingAds(ads));
+
+getData((ads) => {
+  renderAds(ads);
+  activateFilter();
+  clickOnReset(() => renderAds(ads));
+});
 

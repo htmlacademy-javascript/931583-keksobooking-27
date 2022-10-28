@@ -1,10 +1,10 @@
-import { pageActive, getCoordinates } from './form.js';
+import { activateForm, getCoordinates } from './form.js';
 import { getCard } from './card.js';
 
 // Координаты центра карты
 const CENTER_MAP = {
-  lat: 35.689511,
-  lng: 139.691711,
+  lat: 35.682339,
+  lng: 139.75318,
 };
 
 // Зум карты
@@ -46,8 +46,11 @@ const mainPinMarker = L.marker(
 );
 mainPinMarker.addTo(map);
 
+const markerGroup = L.layerGroup().addTo(map);
+const clearMarkers = () => markerGroup.clearLayers();
+
 // Создает маркеры похожих объявлений на карте
-const bookingAds = (ads) => {
+const addMarkers = (ads) => {
   ads.forEach((element) => {
     const marker = L.marker(
       {
@@ -59,7 +62,7 @@ const bookingAds = (ads) => {
       },
     );
     marker
-      .addTo(map)
+      .addTo(markerGroup)
       .bindPopup(getCard(element));
   });
 };
@@ -72,7 +75,7 @@ mainPinMarker.on('moveend', (evt) => {
 
 // Загружает карту и снимает блок с формы
 const loadMap = () => {
-  map.on('load', pageActive());
+  map.on('load', activateForm());
   getCoordinates(CENTER_MAP);
 };
-export {loadMap, bookingAds, mainPinMarker, map, CENTER_MAP, ZOOM_MAP};
+export {loadMap, addMarkers, clearMarkers, mainPinMarker, map, CENTER_MAP, ZOOM_MAP};
