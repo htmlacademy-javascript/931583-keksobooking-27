@@ -25,7 +25,8 @@ const typeHouseFilter = filterMap.querySelector('#housing-type');
 const roomsFilter = filterMap.querySelector('#housing-rooms');
 const guestsFilter = filterMap.querySelector('#housing-guests');
 const priceFilter = filterMap.querySelector('#housing-price');
-const featuresFilter = filterMap.querySelectorAll('.map__checkbox');
+const featuresFilter = filterMap.querySelector('#housing-features');
+
 // Активное состояние фильтра
 const activateFilter = () => {
   filterMap.classList.remove('.map__filters--disabled');
@@ -40,34 +41,39 @@ const checkRooms = (el) => el.offer.rooms === +roomsFilter.value || roomsFilter.
 const checkGuests = (el) => el.offer.guests === +guestsFilter.value || guestsFilter.value === FILTER_DEFAULT;
 const checkPrice = (el) => priceFilter.value === FILTER_DEFAULT || (el.offer.price >= PRICE_FILTER[priceFilter.value].from && el.offer.price <= PRICE_FILTER[priceFilter.value].to);
 
-console.log(featuresFilter);
-
-// const checkFeatures = (el) => {
-//   // Array.from(featuresFilter).some((checkbox) => {
-//   //   if (checkbox.checked) {
-//   //     return true;
-//   //   }
-//   //   if (!el.offer.features) {
-//   //     return false;
-//   //   }
-//   //   return el.offer.features.includes(checkbox.value);
-//   });
-// };
+const checkFeature = (el, checkboxes) => {
+  if(checkboxes.length === 0) {
+    return true;
+  } else if (!el.offer.features) {
+    return false;
+  } else {
+    return checkboxes.every((checkbox) => el.offer.features.includes(checkbox));
+  }
+};
 
 // Создание и добавление маркеров на карту, в т.ч. в зависимости от значений фильтра
 const renderAds = (data) => {
+  const checkedCheckboxes = Array
+    .from(featuresFilter.querySelectorAll('input[type="checkbox"]:checked'))
+    .map((element) => element.value);
   const filteredAds = [];
-  data.forEach((el) => {
-    if (checkTypeHouse(el) && checkRooms(el) && checkGuests(el) && checkPrice(el) && checkFeatures(el)) {
+  for (let i = 0; i < data.length; i++) {
+    const el = data[i];
+    if (checkTypeHouse(el) && checkRooms(el) && checkGuests(el) && checkPrice(el) && checkFeature(el, checkedCheckboxes)) {
       filteredAds.push(el);
     }
-  });
+    if (filteredAds.length === AMOUNT_MARKERS) {
+      break;
+    }
+  }
   clearMarkers();
-  addMarkers(filteredAds.slice(0, AMOUNT_MARKERS));
+  addMarkers(filteredAds);
+};
 
+const changeFilter = (cb) => {
   filterMap.addEventListener('change', () => {
-    renderAds(data);
+    cb();
   });
 };
 
-export {activateFilter, renderAds, filterMap, filterMapChildren};
+export {activateFilter, renderAds, changeFilter, filterMap, filterMapChildren};

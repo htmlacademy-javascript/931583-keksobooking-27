@@ -1,3 +1,4 @@
+// Всплывающее сообщение при ошибке загрузки данных с сервера
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
   const mapContainer = document.querySelector('.map');
@@ -20,4 +21,13 @@ const showAlert = (message) => {
   }, 3000);
 };
 
-export {showAlert};
+// Функция для устранения дребезга
+function debounce (callback, timeoutDelay = 500) {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+}
+
+export {showAlert, debounce};
