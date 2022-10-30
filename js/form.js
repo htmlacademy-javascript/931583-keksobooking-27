@@ -1,6 +1,7 @@
 import { sendData } from './data.js';
 import { showSuccessPopup, showErrorPopup } from './popup.js';
 import {mainPinMarker, map, CENTER_MAP, ZOOM_MAP} from './map.js';
+import { filterMap, filterMapChildren } from './filter.js';
 
 const QUESTS_OPTION = {
   '1': ['1'],
@@ -21,8 +22,6 @@ const MAX_PRICE = 100000;
 
 const formAd = document.querySelector('.ad-form');
 const formAdChildren = formAd.children;
-const filterMap = document.querySelector('.map__filters');
-const filterMapChildren = filterMap.children;
 
 // Элементы формы
 const titleField = formAd.querySelector('#title');
@@ -151,6 +150,7 @@ const resetForm = () => {
   map.setView(CENTER_MAP, ZOOM_MAP);
   map.closePopup();
   formAd.reset();
+  filterMap.reset();
   pristine.reset();
   sliderPriceElement.noUiSlider.updateOptions({
     start: getNumberMinPrice(),
@@ -159,10 +159,13 @@ const resetForm = () => {
 };
 
 // Сброс формы при нажатии кнопки "Очистка"
-resetButton.addEventListener('click', (evt) => {
-  evt.preventDefault();
-  resetForm();
-});
+const clickOnReset = (cb) => {
+  resetButton.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    resetForm();
+    cb();
+  });
+};
 
 // Отправка формы SUBMIT
 formAd.addEventListener('submit', (evt) => {
@@ -195,17 +198,12 @@ const pageDisabled = () => {
   }
 };
 
-// Активное состояние формы и фильтра при включенной карте
-const pageActive = () => {
+// Активное состояние формы
+const activateForm = () => {
   formAd.classList.remove('ad-form--disabled');
   for (const child of formAdChildren) {
     child.removeAttribute('disabled', 'disabled');
   }
-
-  filterMap.classList.remove('.map__filters--disabled');
-  for (const child of filterMapChildren) {
-    child.removeAttribute('disabled', 'disabled');
-  }
 };
 
-export {pageDisabled, pageActive, getCoordinates};
+export {pageDisabled,clickOnReset, activateForm, getCoordinates};
