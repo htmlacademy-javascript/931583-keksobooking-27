@@ -2,6 +2,7 @@ import { sendData } from './data.js';
 import { showSuccessPopup, showErrorPopup } from './popup.js';
 import {mainPinMarker, map, CENTER_MAP, ZOOM_MAP} from './map.js';
 import { filterMap, filterMapChildren } from './filter.js';
+import {getAvatar, getPhoto, photoPreview, imgAvatar} from './photo.js';
 
 const QUESTS_OPTION = {
   '1': ['1'],
@@ -19,6 +20,8 @@ const MIN_PRICE_HOUSE = {
 };
 
 const MAX_PRICE = 100000;
+
+const DEFAULT_AVATAR_SRC = 'img/muffin-grey.svg';
 
 const formAd = document.querySelector('.ad-form');
 const formAdChildren = formAd.children;
@@ -144,11 +147,17 @@ const getCoordinates = (coordinates) => {
   addressField.value = `${(coordinates.lat).toFixed(5)}, ${(coordinates.lng).toFixed(5)}`;
 };
 
+// Включает загрузку и превью аватарки и фото
+getAvatar();
+getPhoto();
+
 // Сбросывает все поля при успешной отправке или при нажатии на кнопку "Очистка"
 const resetForm = () => {
   mainPinMarker.setLatLng(CENTER_MAP);
   map.setView(CENTER_MAP, ZOOM_MAP);
   map.closePopup();
+  imgAvatar.src = DEFAULT_AVATAR_SRC;
+  photoPreview.innerHTML = '';
   formAd.reset();
   filterMap.reset();
   pristine.reset();
