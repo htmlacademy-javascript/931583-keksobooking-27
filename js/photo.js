@@ -7,13 +7,11 @@ const avatarPreview = document.querySelector('.ad-form-header__preview');
 const photoInput = document.querySelector('.ad-form__upload');
 const photoChooser = photoInput.querySelector('#images');
 const photoPreview = document.querySelector('.ad-form__photo');
+const imgAvatar = avatarPreview.querySelector('img');
 
 // Добавляет в разметку аватар
 const addAvatar = (link) => {
-  const img = avatarPreview.querySelector('img').cloneNode(true);
-  avatarPreview.innerHTML = '';
-  avatarPreview.appendChild(img);
-  img.src = link;
+  imgAvatar.src = link;
 };
 
 // Добавляет в разметку фото
@@ -35,8 +33,8 @@ const unploadPicture = (chooser, cb) => {
     const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
 
     if (matches) {
-      const addLink = URL.createObjectURL(file);
-      cb(addLink);
+      const linkImg = URL.createObjectURL(file);
+      cb(linkImg);
     }
   });
 };
@@ -44,4 +42,4 @@ const unploadPicture = (chooser, cb) => {
 const getAvatar = () => unploadPicture(avatarChooser,addAvatar);
 const getPhoto = () => unploadPicture(photoChooser,addPhoto);
 
-export {getAvatar, getPhoto};
+export {getAvatar, getPhoto, photoPreview, imgAvatar};
