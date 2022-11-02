@@ -60,4 +60,6 @@ const getCard = (ad) => {
   return card;
 };
 
-export {getCard};
+export {
+  getCard
+};
