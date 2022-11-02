@@ -1,4 +1,7 @@
-import { addMarkers, clearMarkers } from './map.js';
+import {
+  addMarkers,
+  clearMarkers,
+} from './map.js';
 
 const FILTER_DEFAULT = 'any';
 
@@ -76,4 +79,10 @@ const changeFilter = (cb) => {
   });
 };
 
-export {activateFilter, renderAds, changeFilter, filterMap, filterMapChildren};
+export {
+  activateFilter,
+  renderAds,
+  changeFilter,
+  filterMap,
+  filterMapChildren
+};

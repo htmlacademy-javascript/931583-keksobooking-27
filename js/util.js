@@ -30,4 +30,7 @@ function debounce (callback, timeoutDelay = 500) {
   };
 }
 
-export {showAlert, debounce};
+export {
+  showAlert,
+  debounce
+};

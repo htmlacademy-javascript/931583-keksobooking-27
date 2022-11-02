@@ -42,4 +42,9 @@ const unploadPicture = (chooser, cb) => {
 const getAvatar = () => unploadPicture(avatarChooser,addAvatar);
 const getPhoto = () => unploadPicture(photoChooser,addPhoto);
 
-export {getAvatar, getPhoto, photoPreview, imgAvatar};
+export {
+  getAvatar,
+  getPhoto,
+  photoPreview,
+  imgAvatar
+};
