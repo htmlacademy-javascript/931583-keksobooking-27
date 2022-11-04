@@ -1,6 +1,7 @@
 import {
   pageDisabled,
-  clickOnReset
+  clickOnReset,
+  clickOnSubmit
 } from './form.js';
 
 import {
@@ -27,6 +28,7 @@ getData((ads) => {
   renderAds(ads);
   changeFilter(debounce(() => renderAds(ads), 500));
   activateFilter();
+  clickOnSubmit(() => renderAds(ads));
   clickOnReset(() => renderAds(ads));
 });
 

@@ -1,4 +1,10 @@
+import {
+  pristine
+} from './form.js';
+
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
+const ERROR__MESSAGE = 'Значение полей может быть только изображение![jpg или png]';
 
 const avatarInput = document.querySelector('.ad-form__field');
 const avatarChooser = avatarInput.querySelector('#avatar');
@@ -29,18 +35,19 @@ const unploadPicture = (chooser, cb) => {
   chooser.addEventListener('change', () => {
     const file = chooser.files[0];
     const fileName = file.name.toLowerCase();
-
     const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
 
     if (matches) {
       const linkImg = URL.createObjectURL(file);
       cb(linkImg);
+    } else {
+      pristine.addError(chooser, ERROR__MESSAGE);
     }
   });
 };
 
-const getAvatar = () => unploadPicture(avatarChooser,addAvatar);
-const getPhoto = () => unploadPicture(photoChooser,addPhoto);
+const getAvatar = () => unploadPicture(avatarChooser, addAvatar);
+const getPhoto = () => unploadPicture(photoChooser, addPhoto);
 
 export {
   getAvatar,

@@ -68,7 +68,7 @@ const getNumberMinPrice = () => parseInt(MIN_PRICE_HOUSE[typeHouseField.value].r
 // Слайдер noUiSlider
 noUiSlider.create(sliderPriceElement, {
   range: {
-    min: getNumberMinPrice(),
+    min: 0,
     max: MAX_PRICE,
   },
   start: getNumberMinPrice(),
@@ -121,22 +121,15 @@ pristine.addValidator(
 const changeMinPrice = () => {
   priceField.min = getNumberMinPrice();
   priceField.placeholder = MIN_PRICE_HOUSE[typeHouseField.value];
-  // Меняет стартовую позицию ползунка слайдера в зависимости о выбранного типа жилья
-  sliderPriceElement.noUiSlider.updateOptions({
-    start: getNumberMinPrice(),
-    range: {
-      min: getNumberMinPrice(),
-      max: MAX_PRICE,
-    }
-  });
 };
 
 typeHouseField.addEventListener('change', changeMinPrice);
 
 // Включает слайдер при нажатии и перетягивании ползунка
-sliderPriceElement.noUiSlider.on('update',() => {
-  const sliderPrice = sliderPriceElement.noUiSlider.get();
-  priceField.value = sliderPrice === getNumberMinPrice() ? '' : sliderPrice;
+sliderPriceElement.noUiSlider.on('slide', (evt) => {
+  if (evt) {
+    priceField.value = sliderPriceElement.noUiSlider.get();
+  }
 });
 
 // Меняет положение ползунка слайдера в зависимости от введенного значения поля цены
@@ -148,7 +141,7 @@ const validatePriceHouse = () => Number(priceField.value) >= Number(priceField.m
 const getPriceErrorMessage = () => `${typeHouseField.options[typeHouseField.selectedIndex].text} - мин.цена ${priceField.min} рублей!`;
 
 pristine.addValidator(
-  priceField, validatePriceHouse, getPriceErrorMessage, 2, true
+  priceField, validatePriceHouse, getPriceErrorMessage
 );
 
 // «Время заезда» и «Время выезда» - выбор значения одного поля автоматически изменят значение другого.
@@ -182,10 +175,9 @@ const resetForm = () => {
   photoPreview.innerHTML = '';
   formAd.reset();
   filterMap.reset();
+  sliderPriceElement.noUiSlider.reset();
   pristine.reset();
-  sliderPriceElement.noUiSlider.updateOptions({
-    start: getNumberMinPrice(),
-  });
+  changeMinPrice();
   getCoordinates(mainPinMarker.getLatLng());
 };
 
@@ -199,22 +191,25 @@ const clickOnReset = (cb) => {
 };
 
 // Отправка формы SUBMIT
-formAd.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  const isValid = pristine.validate();
-  if (isValid) {
-    sendData(
-      () => {
-        showSuccessPopup();
-        resetForm();
-      },
-      () => {
-        showErrorPopup();
-      },
-      new FormData(evt.target),
-    );
-  }
-});
+const clickOnSubmit = (cb) => {
+  formAd.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const isValid = pristine.validate();
+    if (isValid) {
+      sendData(
+        () => {
+          showSuccessPopup();
+          resetForm();
+          cb();
+        },
+        () => {
+          showErrorPopup();
+        },
+        new FormData(evt.target),
+      );
+    }
+  });
+};
 
 // Неактивное состояние формы и фильтра при отключенной карте
 const pageDisabled = () => {
@@ -240,6 +235,8 @@ const activateForm = () => {
 export {
   pageDisabled,
   clickOnReset,
+  clickOnSubmit,
   activateForm,
-  getCoordinates
+  getCoordinates,
+  pristine
 };
