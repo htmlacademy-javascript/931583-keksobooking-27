@@ -16,12 +16,12 @@ const photoPreview = document.querySelector('.ad-form__photo');
 const imgAvatar = avatarPreview.querySelector('img');
 
 // Добавляет в разметку аватар
-const addAvatar = (link) => {
+const createLinkAvatar = (link) => {
   imgAvatar.src = link;
 };
 
 // Добавляет в разметку фото
-const addPhoto = (link) => {
+const createElementPhoto = (link) => {
   const img = document.createElement('img');
   photoPreview.appendChild(img);
   img.alt = 'Фото жилья';
@@ -31,7 +31,7 @@ const addPhoto = (link) => {
 };
 
 // Загружает картинки и выводит превью
-const unploadPicture = (chooser, cb) => {
+const getPicture = (chooser, cb) => {
   chooser.addEventListener('change', () => {
     const file = chooser.files[0];
     const fileName = file.name.toLowerCase();
@@ -46,12 +46,12 @@ const unploadPicture = (chooser, cb) => {
   });
 };
 
-const getAvatar = () => unploadPicture(avatarChooser, addAvatar);
-const getPhoto = () => unploadPicture(photoChooser, addPhoto);
+const addAvatar = () => getPicture(avatarChooser, createLinkAvatar);
+const addPhoto = () => getPicture(photoChooser, createElementPhoto);
 
 export {
-  getAvatar,
-  getPhoto,
+  addAvatar,
+  addPhoto,
   photoPreview,
   imgAvatar
 };

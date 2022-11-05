@@ -73,7 +73,7 @@ const renderAds = (data) => {
   addMarkers(filteredAds);
 };
 
-const changeFilter = (cb) => {
+const addFilter = (cb) => {
   filterMap.addEventListener('change', () => {
     cb();
   });
@@ -82,7 +82,7 @@ const changeFilter = (cb) => {
 export {
   activateFilter,
   renderAds,
-  changeFilter,
+  addFilter,
   filterMap,
   filterMapChildren
 };

@@ -20,8 +20,8 @@ import {
 } from './filter.js';
 
 import {
-  getAvatar,
-  getPhoto,
+  addAvatar,
+  addPhoto,
   photoPreview,
   imgAvatar,
 } from './photo.js';
@@ -158,13 +158,13 @@ checkOutField.addEventListener('change', changeCheckOut);
 
 // Блокировка поля "Адрес" для редактирования и создание его значений от главного маркера карты
 addressField.setAttribute('readonly', 'readonly');
-const getCoordinates = (coordinates) => {
+const createCoordinates = (coordinates) => {
   addressField.value = `${(coordinates.lat).toFixed(5)}, ${(coordinates.lng).toFixed(5)}`;
 };
 
 // Включает загрузку и превью аватарки и фото
-getAvatar();
-getPhoto();
+addAvatar();
+addPhoto();
 
 // Сбросывает все поля при успешной отправке или при нажатии на кнопку "Очистка"
 const resetForm = () => {
@@ -178,11 +178,11 @@ const resetForm = () => {
   sliderPriceElement.noUiSlider.reset();
   pristine.reset();
   changeMinPrice();
-  getCoordinates(mainPinMarker.getLatLng());
+  createCoordinates(mainPinMarker.getLatLng());
 };
 
 // Сброс формы при нажатии кнопки "Очистка"
-const clickOnReset = (cb) => {
+const resetPage = (cb) => {
   resetButton.addEventListener('click', (evt) => {
     evt.preventDefault();
     resetForm();
@@ -191,7 +191,7 @@ const clickOnReset = (cb) => {
 };
 
 // Отправка формы SUBMIT
-const clickOnSubmit = (cb) => {
+const submitForm = (cb) => {
   formAd.addEventListener('submit', (evt) => {
     evt.preventDefault();
     const isValid = pristine.validate();
@@ -212,7 +212,7 @@ const clickOnSubmit = (cb) => {
 };
 
 // Неактивное состояние формы и фильтра при отключенной карте
-const pageDisabled = () => {
+const disableForm = () => {
   formAd.classList.add('ad-form--disabled');
   for (const child of formAdChildren) {
     child.setAttribute('disabled', 'disabled');
@@ -233,10 +233,10 @@ const activateForm = () => {
 };
 
 export {
-  pageDisabled,
-  clickOnReset,
-  clickOnSubmit,
+  disableForm,
+  resetPage,
+  submitForm,
   activateForm,
-  getCoordinates,
+  createCoordinates,
   pristine
 };
