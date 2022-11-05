@@ -10,7 +10,7 @@ import {
 import {
   mainPinMarker,
   map,
-  CENTER_MAP,
+  centerMap,
   ZOOM_MAP,
 } from './map.js';
 
@@ -26,14 +26,14 @@ import {
   imgAvatar,
 } from './photo.js';
 
-const QUESTS_OPTION = {
+const questsOption = {
   '1': ['1'],
   '2': ['1', '2'],
   '3': ['1', '2','3'],
   '100': ['0'],
 };
 
-const MIN_PRICE_HOUSE = {
+const minPriceHouse = {
   'bungalow': '0',
   'flat': '1 000',
   'hotel': '3 000',
@@ -63,7 +63,7 @@ const resetButton = formAd.querySelector('.ad-form__reset');
 const sliderPriceElement = formAd.querySelector('.ad-form__slider');
 
 // Переводит мин.цену из строки в число
-const getNumberMinPrice = () => parseInt(MIN_PRICE_HOUSE[typeHouseField.value].replace(' ', ''), 10);
+const getNumberMinPrice = () => parseInt(minPriceHouse[typeHouseField.value].replace(' ', ''), 10);
 
 // Слайдер noUiSlider
 noUiSlider.create(sliderPriceElement, {
@@ -101,7 +101,7 @@ pristine.addValidator(
 );
 
 // Проверка на валидацию - зависимость полей "Количество комнат" и "Количество мест"
-const validateQuests = () => QUESTS_OPTION[roomField.value].includes(capacityField.value);
+const validateQuests = () => questsOption[roomField.value].includes(capacityField.value);
 
 const getQuestsErrorMessage = () => {
   const QuestsErrorMessage = {
@@ -120,7 +120,7 @@ pristine.addValidator(
 //  Выбор значения «Тип жилья» меняет атрибуты минимального значения и плейсхолдера поля «Цена за ночь».
 const changeMinPrice = () => {
   priceField.min = getNumberMinPrice();
-  priceField.placeholder = MIN_PRICE_HOUSE[typeHouseField.value];
+  priceField.placeholder = minPriceHouse[typeHouseField.value];
 };
 
 typeHouseField.addEventListener('change', changeMinPrice);
@@ -168,8 +168,8 @@ addPhoto();
 
 // Сбросывает все поля при успешной отправке или при нажатии на кнопку "Очистка"
 const resetForm = () => {
-  mainPinMarker.setLatLng(CENTER_MAP);
-  map.setView(CENTER_MAP, ZOOM_MAP);
+  mainPinMarker.setLatLng(centerMap);
+  map.setView(centerMap, ZOOM_MAP);
   map.closePopup();
   imgAvatar.src = DEFAULT_AVATAR_SRC;
   photoPreview.innerHTML = '';

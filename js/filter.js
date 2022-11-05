@@ -7,7 +7,7 @@ const FILTER_DEFAULT = 'any';
 
 const AMOUNT_MARKERS = 10;
 
-const PRICE_FILTER = {
+const priceRangeToFilter = {
   low: {
     from: 0,
     to: 10000,
@@ -42,7 +42,7 @@ const activateFilter = () => {
 const checkTypeHouse = (el) => typeHouseFilter.value === el.offer.type || typeHouseFilter.value === FILTER_DEFAULT;
 const checkRooms = (el) => el.offer.rooms === +roomsFilter.value || roomsFilter.value === FILTER_DEFAULT;
 const checkGuests = (el) => el.offer.guests === +guestsFilter.value || guestsFilter.value === FILTER_DEFAULT;
-const checkPrice = (el) => priceFilter.value === FILTER_DEFAULT || (el.offer.price >= PRICE_FILTER[priceFilter.value].from && el.offer.price <= PRICE_FILTER[priceFilter.value].to);
+const checkPrice = (el) => priceFilter.value === FILTER_DEFAULT || (el.offer.price >= priceRangeToFilter[priceFilter.value].from && el.offer.price <= priceRangeToFilter[priceFilter.value].to);
 
 const checkFeature = (el, checkboxes) => {
   if(checkboxes.length === 0) {
