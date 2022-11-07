@@ -41,6 +41,18 @@ const minPriceHouse = {
   'palace': '10 000',
 };
 
+const questsErrorMessage = {
+  '1': 'Размещение в 1 комнате - не более 1 гостя',
+  '2': 'Размещение в 2 комнатах - от 1 до 2 гостей',
+  '3': 'Размещение в 3 комнатах - от 1 до 3 гостей',
+  '100': '100 комнат не для гостей!',
+};
+
+const allowedHeaderLength = {
+  min: 30,
+  max: 100,
+};
+
 const MAX_PRICE = 100000;
 
 const DEFAULT_AVATAR_SRC = 'img/muffin-grey.svg';
@@ -74,12 +86,8 @@ noUiSlider.create(sliderPriceElement, {
   start: getNumberMinPrice(),
   connect: 'lower',
   format: {
-    to: function (value) {
-      return Number(value.toFixed(0));
-    },
-    from: function (value) {
-      return parseFloat(value);
-    },
+    to: (value) => Number(value.toFixed(0)),
+    from: (value) => parseFloat(value),
   },
 });
 
@@ -91,27 +99,19 @@ const pristine = new Pristine(formAd, {
 });
 
 // Проверка на валидацию - Заголовок
-const validateTitle = (value) => value.length >= 30 && value.length <= 100;
+const validateTitle = (value) => value.length >= allowedHeaderLength.min && value.length <= allowedHeaderLength.max;
 
 pristine.addValidator(
   titleField,
   validateTitle,
-  'От 30 до 100 символов',
+  `От ${allowedHeaderLength.min} до ${allowedHeaderLength.max} символов`,
   0
 );
 
 // Проверка на валидацию - зависимость полей "Количество комнат" и "Количество мест"
 const validateQuests = () => questsOption[roomField.value].includes(capacityField.value);
 
-const getQuestsErrorMessage = () => {
-  const QuestsErrorMessage = {
-    '1': 'Размещение в 1 комнате - не более 1 гостя',
-    '2': 'Размещение в 2 комнатах - от 1 до 2 гостей',
-    '3': 'Размещение в 3 комнатах - от 1 до 3 гостей',
-    '100': '100 комнат не для гостей',
-  };
-  return QuestsErrorMessage[roomField.value];
-};
+const getQuestsErrorMessage = () => questsErrorMessage[roomField.value];
 
 pristine.addValidator(
   capacityField, validateQuests, getQuestsErrorMessage
@@ -214,22 +214,15 @@ const submitForm = (cb) => {
 // Неактивное состояние формы и фильтра при отключенной карте
 const disableForm = () => {
   formAd.classList.add('ad-form--disabled');
-  for (const child of formAdChildren) {
-    child.setAttribute('disabled', 'disabled');
-  }
-
+  Array.from(formAdChildren).forEach((element) => element.setAttribute('disabled', 'disabled'));
   filterMap.classList.add('.map__filters--disabled');
-  for (const child of filterMapChildren) {
-    child.setAttribute('disabled', 'disabled');
-  }
+  Array.from(filterMapChildren).forEach((element) => element.setAttribute('disabled', 'disabled'));
 };
 
 // Активное состояние формы
 const activateForm = () => {
   formAd.classList.remove('ad-form--disabled');
-  for (const child of formAdChildren) {
-    child.removeAttribute('disabled', 'disabled');
-  }
+  Array.from(formAdChildren).forEach((element) => element.removeAttribute('disabled'));
 };
 
 export {

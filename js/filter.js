@@ -33,9 +33,7 @@ const featuresFilter = filterMap.querySelector('#housing-features');
 // Активное состояние фильтра
 const activateFilter = () => {
   filterMap.classList.remove('.map__filters--disabled');
-  for (const child of filterMapChildren) {
-    child.removeAttribute('disabled', 'disabled');
-  }
+  Array.from(filterMapChildren).forEach((element) => element.removeAttribute('disabled'));
 };
 
 // Устанавливает взаимосвязь между фильтром и объялениями
@@ -45,13 +43,10 @@ const checkGuests = (el) => el.offer.guests === +guestsFilter.value || guestsFil
 const checkPrice = (el) => priceFilter.value === FILTER_DEFAULT || (el.offer.price >= priceRangeToFilter[priceFilter.value].from && el.offer.price <= priceRangeToFilter[priceFilter.value].to);
 
 const checkFeature = (el, checkboxes) => {
-  if(checkboxes.length === 0) {
-    return true;
-  } else if (!el.offer.features) {
+  if (!el.offer.features) {
     return false;
-  } else {
-    return checkboxes.every((checkbox) => el.offer.features.includes(checkbox));
   }
+  return checkboxes.every((checkbox) => el.offer.features.includes(checkbox));
 };
 
 // Создание и добавление маркеров на карту, в т.ч. в зависимости от значений фильтра
