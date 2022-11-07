@@ -7,7 +7,7 @@ const FILTER_DEFAULT = 'any';
 
 const AMOUNT_MARKERS = 10;
 
-const PRICE_FILTER = {
+const priceRangeToFilter = {
   low: {
     from: 0,
     to: 10000,
@@ -33,25 +33,20 @@ const featuresFilter = filterMap.querySelector('#housing-features');
 // Активное состояние фильтра
 const activateFilter = () => {
   filterMap.classList.remove('.map__filters--disabled');
-  for (const child of filterMapChildren) {
-    child.removeAttribute('disabled', 'disabled');
-  }
+  Array.from(filterMapChildren).forEach((element) => element.removeAttribute('disabled'));
 };
 
 // Устанавливает взаимосвязь между фильтром и объялениями
 const checkTypeHouse = (el) => typeHouseFilter.value === el.offer.type || typeHouseFilter.value === FILTER_DEFAULT;
 const checkRooms = (el) => el.offer.rooms === +roomsFilter.value || roomsFilter.value === FILTER_DEFAULT;
 const checkGuests = (el) => el.offer.guests === +guestsFilter.value || guestsFilter.value === FILTER_DEFAULT;
-const checkPrice = (el) => priceFilter.value === FILTER_DEFAULT || (el.offer.price >= PRICE_FILTER[priceFilter.value].from && el.offer.price <= PRICE_FILTER[priceFilter.value].to);
+const checkPrice = (el) => priceFilter.value === FILTER_DEFAULT || (el.offer.price >= priceRangeToFilter[priceFilter.value].from && el.offer.price <= priceRangeToFilter[priceFilter.value].to);
 
 const checkFeature = (el, checkboxes) => {
-  if(checkboxes.length === 0) {
-    return true;
-  } else if (!el.offer.features) {
+  if (!el.offer.features) {
     return false;
-  } else {
-    return checkboxes.every((checkbox) => el.offer.features.includes(checkbox));
   }
+  return checkboxes.every((checkbox) => el.offer.features.includes(checkbox));
 };
 
 // Создание и добавление маркеров на карту, в т.ч. в зависимости от значений фильтра
@@ -73,7 +68,7 @@ const renderAds = (data) => {
   addMarkers(filteredAds);
 };
 
-const changeFilter = (cb) => {
+const addFilter = (cb) => {
   filterMap.addEventListener('change', () => {
     cb();
   });
@@ -82,7 +77,7 @@ const changeFilter = (cb) => {
 export {
   activateFilter,
   renderAds,
-  changeFilter,
+  addFilter,
   filterMap,
   filterMapChildren
 };

@@ -1,16 +1,17 @@
 import {
-  pageDisabled,
-  clickOnReset
+  disableForm,
+  resetPage,
+  submitForm,
 } from './form.js';
 
 import {
-  loadMap
+  getMap
 } from './map.js';
 
 import {
   renderAds,
   activateFilter,
-  changeFilter } from './filter.js';
+  addFilter } from './filter.js';
 
 import {
   getData
@@ -20,13 +21,14 @@ import {
   debounce
 } from './util.js';
 
-pageDisabled();
-loadMap();
+disableForm();
+getMap();
 
 getData((ads) => {
   renderAds(ads);
-  changeFilter(debounce(() => renderAds(ads), 500));
+  addFilter(debounce(() => renderAds(ads), 500));
   activateFilter();
-  clickOnReset(() => renderAds(ads));
+  submitForm(() => renderAds(ads));
+  resetPage(() => renderAds(ads));
 });
 

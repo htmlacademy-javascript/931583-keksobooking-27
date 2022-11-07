@@ -1,8 +1,8 @@
-import { activateForm, getCoordinates } from './form.js';
+import { activateForm, createCoordinates } from './form.js';
 import { getCard } from './card.js';
 
 // Координаты центра карты
-const CENTER_MAP = {
+const centerMap = {
   lat: 35.682339,
   lng: 139.75318,
 };
@@ -26,7 +26,7 @@ const pinIcon = L.icon({
 
 // Карта с центром в Токио
 const map = L.map('map-canvas')
-  .setView(CENTER_MAP, ZOOM_MAP);
+  .setView(centerMap, ZOOM_MAP);
 
 // Использование тайлов от OpenStreetMap
 L.tileLayer(
@@ -38,7 +38,7 @@ L.tileLayer(
 
 // Главный маркер
 const mainPinMarker = L.marker(
-  CENTER_MAP,
+  centerMap,
   {
     draggable: true,
     icon: mainPinIcon,
@@ -70,12 +70,12 @@ const addMarkers = (ads) => {
 // Запись координат от главного маркера для формы в поле "Адрес"
 mainPinMarker.on('moveend', (evt) => {
   const coordinatesMarker = evt.target.getLatLng();
-  getCoordinates(coordinatesMarker);
+  createCoordinates(coordinatesMarker);
 });
 
 // Загружает карту и снимает блок с формы
-const loadMap = () => {
+const getMap = () => {
   map.on('load', activateForm());
-  getCoordinates(CENTER_MAP);
+  createCoordinates(centerMap);
 };
-export {loadMap, addMarkers, clearMarkers, mainPinMarker, map, CENTER_MAP, ZOOM_MAP};
+export {getMap, addMarkers, clearMarkers, mainPinMarker, map, centerMap, ZOOM_MAP};
