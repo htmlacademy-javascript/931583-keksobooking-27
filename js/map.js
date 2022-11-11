@@ -1,4 +1,4 @@
-import { activateForm, createCoordinates } from './form.js';
+import { setCoordinates } from './form.js';
 import { getCard } from './card.js';
 
 // Координаты центра карты
@@ -70,12 +70,9 @@ const addMarkers = (ads) => {
 // Запись координат от главного маркера для формы в поле "Адрес"
 mainPinMarker.on('moveend', (evt) => {
   const coordinatesMarker = evt.target.getLatLng();
-  createCoordinates(coordinatesMarker);
+  setCoordinates(coordinatesMarker);
 });
 
-// Загружает карту и снимает блок с формы
-const getMap = () => {
-  map.on('load', activateForm());
-  createCoordinates(centerMap);
-};
-export {getMap, addMarkers, clearMarkers, mainPinMarker, map, centerMap, ZOOM_MAP};
+const whenMapReady = map.whenReady.bind(map);
+
+export {whenMapReady, addMarkers, clearMarkers, mainPinMarker, map, centerMap, ZOOM_MAP};
