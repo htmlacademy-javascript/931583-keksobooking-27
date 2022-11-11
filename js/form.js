@@ -20,8 +20,8 @@ import {
 } from './filter.js';
 
 import {
-  addAvatar,
-  addPhoto,
+  initAvatarPreview,
+  initPhotoPreview,
   photoPreview,
   imgAvatar,
 } from './photo.js';
@@ -158,13 +158,14 @@ checkOutField.addEventListener('change', changeCheckOut);
 
 // Блокировка поля "Адрес" для редактирования и создание его значений от главного маркера карты
 addressField.setAttribute('readonly', 'readonly');
-const createCoordinates = (coordinates) => {
+
+const setCoordinates = (coordinates) => {
   addressField.value = `${(coordinates.lat).toFixed(5)}, ${(coordinates.lng).toFixed(5)}`;
 };
 
 // Включает загрузку и превью аватарки и фото
-addAvatar();
-addPhoto();
+initAvatarPreview();
+initPhotoPreview();
 
 // Сбросывает все поля при успешной отправке или при нажатии на кнопку "Очистка"
 const resetForm = () => {
@@ -178,11 +179,11 @@ const resetForm = () => {
   sliderPriceElement.noUiSlider.reset();
   pristine.reset();
   changeMinPrice();
-  createCoordinates(mainPinMarker.getLatLng());
+  setCoordinates(mainPinMarker.getLatLng());
 };
 
 // Сброс формы при нажатии кнопки "Очистка"
-const resetPage = (cb) => {
+const listenResetButtonClick = (cb) => {
   resetButton.addEventListener('click', (evt) => {
     evt.preventDefault();
     resetForm();
@@ -191,22 +192,20 @@ const resetPage = (cb) => {
 };
 
 // Отправка формы SUBMIT
-const submitForm = (cb) => {
+const listenAdFormSubmit = (cb) => {
   formAd.addEventListener('submit', (evt) => {
     evt.preventDefault();
     const isValid = pristine.validate();
     if (isValid) {
-      sendData(
-        () => {
+      sendData(new FormData(evt.target))
+        .then(() => {
           showSuccessPopup();
           resetForm();
           cb();
-        },
-        () => {
+        })
+        .catch(() => {
           showErrorPopup();
-        },
-        new FormData(evt.target),
-      );
+        });
     }
   });
 };
@@ -227,9 +226,9 @@ const activateForm = () => {
 
 export {
   disableForm,
-  resetPage,
-  submitForm,
+  listenResetButtonClick,
+  listenAdFormSubmit,
   activateForm,
-  createCoordinates,
+  setCoordinates,
   pristine
 };

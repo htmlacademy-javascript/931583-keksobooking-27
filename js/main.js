@@ -1,11 +1,14 @@
 import {
   disableForm,
-  resetPage,
-  submitForm,
+  listenResetButtonClick,
+  listenAdFormSubmit,
+  activateForm,
+  setCoordinates,
 } from './form.js';
 
 import {
-  getMap
+  whenMapReady,
+  centerMap
 } from './map.js';
 
 import {
@@ -18,17 +21,25 @@ import {
 } from './data.js';
 
 import {
-  debounce
+  debounce,
+  showAlert
 } from './util.js';
 
 disableForm();
-getMap();
 
-getData((ads) => {
-  renderAds(ads);
-  addFilter(debounce(() => renderAds(ads), 500));
-  activateFilter();
-  submitForm(() => renderAds(ads));
-  resetPage(() => renderAds(ads));
+whenMapReady(() =>{
+  activateForm();
+  setCoordinates(centerMap);
 });
+
+getData()
+  .then((ads) => {
+    renderAds(ads);
+    addFilter(debounce(() => renderAds(ads), 500));
+    activateFilter();
+    listenAdFormSubmit(() => renderAds(ads));
+    listenResetButtonClick(() => renderAds(ads));
+  })
+  .catch((error) => showAlert(`Не удалось загрузить данные! ${error.message}`));
+
 
